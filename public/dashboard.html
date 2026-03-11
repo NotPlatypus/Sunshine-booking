@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Sunshine Ladies</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B2B4B;
+    --yellow: #F5C300;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f97316;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-500: #64748b;
+  }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: #333;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 240px;
+    background: var(--navy);
+    padding: 24px 0;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: white;
+    padding: 0 24px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 16px;
+  }
+  .sidebar-logo span { color: var(--yellow); display: block; font-size: 0.8rem; font-family: 'DM Sans', sans-serif; font-weight: 400; margin-top: 2px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: rgba(255,255,255,0.1);
+    color: white;
+  }
+  .nav-item.active { border-right: 3px solid var(--yellow); }
+  .sidebar-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .btn-logout {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.7);
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,0,0,0.2); color: white; }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 240px;
+    padding: 32px;
+    min-height: 100vh;
+  }
+
+  /* TABS */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .page-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.75rem;
+    color: var(--navy);
+  }
+
+  /* STATS CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media(max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .stat-label { font-size: 0.8rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--navy); margin: 4px 0; }
+  .stat-icon { font-size: 1.5rem; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 50px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--gray-500);
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--navy);
+    color: var(--navy);
+    background: #f0f4ff;
+  }
+  .filter-btn[data-status="pending"].active { border-color: var(--orange); color: var(--orange); background: #fff7ed; }
+  .filter-btn[data-status="confirmed"].active { border-color: var(--green); color: #166534; background: #f0fdf4; }
+  .filter-btn[data-status="cancelled"].active { border-color: var(--red); color: #991b1b; background: #fef2f2; }
+
+  /* REZERVACIJE TABLE */
+  .table-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gray-50); }
+
+  /* STATUS BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .badge-pending  { background: #fff7ed; color: #c2410c; }
+  .badge-confirmed { background: #f0fdf4; color: #166534; }
+  .badge-cancelled { background: #fef2f2; color: #991b1b; }
+
+  /* ACTION BUTTONS */
+  .action-btns { display: flex; gap: 6px; }
+  .btn-confirm, .btn-cancel {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-confirm { background: #dcfce7; color: #166534; }
+  .btn-confirm:hover { background: var(--green); color: white; }
+  .btn-cancel { background: #fee2e2; color: #991b1b; }
+  .btn-cancel:hover { background: var(--red); color: white; }
+
+  /* PRAZNA LISTA */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray-500);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+
+  /* BLOKIRANJE DATUMA */
+  .block-form {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+  }
+  .block-form h3 { font-family: 'Fraunces', serif; color: var(--navy); margin-bottom: 16px; }
+  .block-form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .block-form input[type="date"], .block-form input[type="text"] {
+    padding: 10px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+  }
+  .block-form input:focus { border-color: var(--navy); }
+  .btn-block {
+    padding: 10px 20px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .btn-unblock {
+    padding: 5px 10px;
+    background: #fee2e2;
+    color: #991b1b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .blocked-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+  .blocked-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--gray-50);
+    border-radius: 8px;
+    font-size: 0.875rem;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* MOBILE */
+  @media(max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    table { font-size: 0.8rem; }
+    td, th { padding: 10px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    Sunshine Ladies
+    <span>Admin Dashboard</span>
+  </div>
+  <a class="nav-item active" onclick="prikaziTab('rezervacije')">📋 Reservations</a>
+  <a class="nav-item" onclick="prikaziTab('blokirani')">🚫 Blocked Dates</a>
+  <a class="nav-item" href="/booking.html" target="_blank">📅 View Booking Form</a>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TAB: Rezervacije -->
+  <div class="tab-content active" id="tab-rezervacije">
+    <div class="page-header">
+      <h1 class="page-title">Reservations</h1>
+      <button onclick="ucitajRezervacije()" style="padding:8px 16px; border: 2px solid #e2e8f0; border-radius:8px; background:white; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.85rem;">
+        🔄 Refresh
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-value" id="stat-ukupno">—</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value" id="stat-pending">—</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="stat-confirmed">—</div>
+        <div class="stat-label">Confirmed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">❌</div>
+        <div class="stat-value" id="stat-cancelled">—</div>
+        <div class="stat-label">Cancelled</div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-status="all" onclick="filterStatus('all', this)">All</button>
+      <button class="filter-btn" data-status="pending" onclick="filterStatus('pending', this)">⏳ Pending</button>
+      <button class="filter-btn" data-status="confirmed" onclick="filterStatus('confirmed', this)">✅ Confirmed</button>
+      <button class="filter-btn" data-status="cancelled" onclick="filterStatus('cancelled', this)">❌ Cancelled</button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Service</th>
+            <th>Date & Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-body">
+          <tr><td colspan="6" style="text-align:center; padding:40px; color:#888;">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: Blokirani datumi -->
+  <div class="tab-content" id="tab-blokirani">
+    <div class="page-header">
+      <h1 class="page-title">Blocked Dates</h1>
+    </div>
+
+    <div class="block-form">
+      <h3>🚫 Block a Date</h3>
+      <p style="color:#888; font-size:0.875rem; margin-bottom:16px;">
+        Block specific days — holidays, vacations, or any unavailable date.
+      </p>
+      <div class="block-form-row">
+        <input type="date" id="blok-datum" min="">
+        <input type="text" id="blok-razlog" placeholder="Reason (e.g. Holiday, Vacation)" style="flex:1; min-width:200px;">
+        <button class="btn-block" onclick="blokirajDatum()">Block Date</button>
+      </div>
+
+      <div class="blocked-list" id="blocked-list">
+        <p style="color:#888; font-size:0.875rem; padding:10px 0;">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST NOTIFIKACIJA -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// DASHBOARD JAVASCRIPT
+// ============================================
+
+let sveRezervacije = [];
+let aktivniFilter = 'all';
+
+// Provera logina — ako nije ulogovan, idi na login
+async function proveraLogina() {
+  try {
+    const odgovor = await fetch('/api/admin/check');
+    const podaci = await odgovor.json();
+    if (!podaci.ulogovan) {
+      window.location.href = '/admin.html';
+    }
+  } catch {
+    window.location.href = '/admin.html';
+  }
+}
+
+// Odjava
+async function logout() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  window.location.href = '/admin.html';
+}
+
+// Prebaci tab
+function prikaziTab(naziv) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`tab-${naziv}`).classList.add('active');
+  event.target.classList.add('active');
+
+  if (naziv === 'blokirani') ucitajBlokirane();
+}
+
+// Toast poruka
+function toast(tekst, tip = 'uspeh') {
+  const el = document.getElementById('toast');
+  el.textContent = tekst;
+  el.style.background = tip === 'greska' ? '#ef4444' : '#1B2B4B';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ===== REZERVACIJE =====
+async function ucitajRezervacije() {
+  try {
+    const odgovor = await fetch('/api/reservations');
+    if (!odgovor.ok) { window.location.href = '/admin.html'; return; }
+    sveRezervacije = await odgovor.json();
+    azurirajStats();
+    prikaziRezervacije(sveRezervacije);
+  } catch {
+    toast('Could not load reservations', 'greska');
+  }
+}
+
+function azurirajStats() {
+  document.getElementById('stat-ukupno').textContent = sveRezervacije.length;
+  document.getElementById('stat-pending').textContent   = sveRezervacije.filter(r => r.status === 'pending').length;
+  document.getElementById('stat-confirmed').textContent = sveRezervacije.filter(r => r.status === 'confirmed').length;
+  document.getElementById('stat-cancelled').textContent = sveRezervacije.filter(r => r.status === 'cancelled').length;
+}
+
+function filterStatus(status, btn) {
+  aktivniFilter = status;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const filtrirane = status === 'all'
+    ? sveRezervacije
+    : sveRezervacije.filter(r => r.status === status);
+
+  prikaziRezervacije(filtrirane);
+}
+
+function prikaziRezervacije(lista) {
+  const tbody = document.getElementById('tabela-body');
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `
+      <tr><td colspan="6">
+        <div class="empty-state">
+          <div class="icon">📭</div>
+          <div>No reservations found</div>
+        </div>
+      </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(r => `
+    <tr>
+      <td style="color:#888;">#${r.id}</td>
+      <td>
+        <div style="font-weight:600;">${escHtml(r.ime)}</div>
+        <div style="color:#888; font-size:0.78rem;">${escHtml(r.email)}</div>
+        <div style="color:#888; font-size:0.78rem;">${escHtml(r.telefon)}</div>
+      </td>
+      <td>
+        <div style="font-weight:600;">${escHtml(r.tip_ciscenja)}</div>
+        <div style="color:#888; font-size:0.78rem; max-width:160px;">${escHtml(r.adresa)}</div>
+        ${r.napomena ? `<div style="color:#888; font-size:0.78rem; font-style:italic;">"${escHtml(r.napomena)}"</div>` : ''}
+      </td>
+      <td>
+        <div style="font-weight:600;">${r.datum}</div>
+        <div style="color:#888;">${r.vreme}</div>
+      </td>
+      <td>
+        <span class="badge badge-${r.status}">
+          ${r.status === 'pending' ? '⏳' : r.status === 'confirmed' ? '✅' : '❌'}
+          ${r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+        </span>
+      </td>
+      <td>
+        <div class="action-btns">
+          ${r.status !== 'confirmed' && r.status !== 'cancelled' ? `
+            <button class="btn-confirm" onclick="potvrdi(${r.id})">✓ Confirm</button>
+          ` : ''}
+          ${r.status !== 'cancelled' ? `
+            <button class="btn-cancel" onclick="otkazi(${r.id})">✕ Cancel</button>
+          ` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function potvrdi(id) {
+  if (!confirm('Confirm this booking? Client will receive an email.')) return;
+
+  const odgovor = await fetch(`/api/reservations/${id}/confirm`, { method: 'PUT' });
+  if (odgovor.ok) {
+    toast('✅ Booking confirmed! Email sent to client.');
+    ucitajRezervacije();
+  } else {
+    toast('Error confirming booking', 'greska');
+  }
+}
+
+async function otkazi(id) {
+  if (!confirm('Cancel this booking? Client will receive an email.')) return;
+
+  const odgovor = await fetch(`/api/reservations/${id}/cancel`, { method: 'PUT' });
+  if (odgovor.ok) {
+    toast('❌ Booking cancelled. Email sent to client.');
+    ucitajRezervacije();
+  } else {
+    toast('Error cancelling booking', 'greska');
+  }
+}
+
+// ===== BLOKIRANI DATUMI =====
+async function ucitajBlokirane() {
+  const odgovor = await fetch('/api/blocked-dates');
+  const lista = await odgovor.json();
+  const el = document.getElementById('blocked-list');
+
+  if (lista.length === 0) {
+    el.innerHTML = '<p style="color:#888; font-size:0.875rem; padding:10px 0;">No blocked dates.</p>';
+    return;
+  }
+
+  el.innerHTML = lista.map(d => `
+    <div class="blocked-item">
+      <div>
+        <strong>${d.datum}</strong>
+        ${d.razlog ? `<span style="color:#888; margin-left:8px;">— ${escHtml(d.razlog)}</span>` : ''}
+      </div>
+      <button class="btn-unblock" onclick="odblokiraj(${d.id})">Remove</button>
+    </div>
+  `).join('');
+}
+
+async function blokirajDatum() {
+  const datum  = document.getElementById('blok-datum').value;
+  const razlog = document.getElementById('blok-razlog').value.trim();
+
+  if (!datum) { toast('Select a date first', 'greska'); return; }
+
+  const odgovor = await fetch('/api/block-date', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ datum, razlog })
+  });
+
+  if (odgovor.ok) {
+    toast(`🚫 ${datum} blocked!`);
+    document.getElementById('blok-datum').value = '';
+    document.getElementById('blok-razlog').value = '';
+    ucitajBlokirane();
+  } else {
+    const err = await odgovor.json();
+    toast(err.greska || 'Error blocking date', 'greska');
+  }
+}
+
+async function odblokiraj(id) {
+  await fetch(`/api/block-date/${id}`, { method: 'DELETE' });
+  toast('Date unblocked!');
+  ucitajBlokirane();
+}
+
+// Escape HTML — zaštita od XSS
+function escHtml(tekst) {
+  const el = document.createElement('div');
+  el.textContent = tekst || '';
+  return el.innerHTML;
+}
+
+// Postavi min datum za blokiranje
+document.getElementById('blok-datum').min = new Date().toISOString().split('T')[0];
+
+// ===== INIT =====
+proveraLogina().then(() => ucitajRezervacije());
+
+// Auto-refresh svakih 60 sekundi
+setInterval(ucitajRezervacije, 60000);
+</script>
+</body>
+</html>

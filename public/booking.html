@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Cleaning — Sunshine Ladies</title>
+<meta name="description" content="Book a professional house cleaning in Lubbock, TX with Sunshine Ladies Cleaning Service.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1B2B4B;
+    --navy-light: #243659;
+    --yellow: #F5C300;
+    --white: #fff;
+    --gray-50: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-500: #6c757d;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f97316;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: #333;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .nav {
+    background: var(--navy);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--yellow); }
+  .nav-back {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-back:hover { color: var(--yellow); }
+
+  /* HERO */
+  .hero {
+    background: var(--navy);
+    padding: 48px 24px;
+    text-align: center;
+    color: white;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 12px;
+  }
+  .hero h1 span { color: var(--yellow); }
+  .hero p { color: rgba(255,255,255,0.7); font-size: 1rem; }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media(max-width: 700px) {
+    .container { grid-template-columns: 1fr; }
+  }
+
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.25rem;
+    color: var(--navy);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 16px; }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #333;
+    background: white;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--navy);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* SERVICE CARDS */
+  .service-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .service-option {
+    border: 2px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .service-option:hover { border-color: var(--navy); }
+  .service-option.selected {
+    border-color: var(--yellow);
+    background: #fffbeb;
+  }
+  .service-option input[type="radio"] { display: none; }
+  .service-icon { font-size: 1.5rem; }
+  .service-info { flex: 1; }
+  .service-name { font-weight: 600; font-size: 0.95rem; color: var(--navy); }
+  .service-desc { font-size: 0.8rem; color: var(--gray-500); margin-top: 2px; }
+
+  /* KALENDAR */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .calendar-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .cal-btn {
+    background: none;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .cal-btn:hover { border-color: var(--navy); }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+  .cal-day-name {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    padding: 4px 0;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid transparent;
+    font-weight: 500;
+  }
+  .cal-day.empty { cursor: default; }
+  .cal-day.past {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+  .cal-day.weekend {
+    color: #ccc;
+    cursor: not-allowed;
+    background: #fafafa;
+  }
+  .cal-day.available {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .cal-day.available:hover {
+    background: #22c55e;
+    color: white;
+  }
+  .cal-day.booked {
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: not-allowed;
+  }
+  .cal-day.blocked {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+  .cal-day.selected {
+    background: var(--navy) !important;
+    color: white !important;
+    border-color: var(--yellow);
+  }
+  .cal-day.today {
+    border-color: var(--yellow);
+  }
+
+  /* LEGENDA */
+  .legenda {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 0.78rem;
+    color: var(--gray-500);
+  }
+  .legenda-item { display: flex; align-items: center; gap: 5px; }
+  .legenda-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* VREMENA */
+  .vremena-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  .vremena-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .vreme-btn {
+    padding: 10px;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #333;
+  }
+  .vreme-btn:hover:not(:disabled) {
+    border-color: var(--navy);
+    background: #f0f4ff;
+  }
+  .vreme-btn.selected {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+  .vreme-btn:disabled {
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: not-allowed;
+    border-color: #fecaca;
+  }
+  .vreme-btn:disabled::after { content: ' ✕'; }
+
+  /* SUBMIT BTN */
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--yellow);
+    color: var(--navy);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+  }
+  .btn-submit:hover { background: #e6b800; transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* STATUS PORUKE */
+  .status {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-top: 16px;
+    font-size: 0.9rem;
+    display: none;
+  }
+  .status.uspeh { background: #dcfce7; color: #166534; display: block; }
+  .status.greska { background: #fee2e2; color: #991b1b; display: block; }
+
+  /* LOADING */
+  .loading-slot {
+    text-align: center;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    padding: 16px 0;
+  }
+
+  /* SELECTED SUMMARY */
+  .summary-box {
+    background: #fffbeb;
+    border: 2px solid var(--yellow);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 0.875rem;
+  }
+  .summary-box h4 {
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .summary-row { display: flex; justify-content: space-between; margin: 4px 0; }
+  .summary-label { color: var(--gray-500); }
+  .summary-val { font-weight: 600; color: var(--navy); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="https://notplatypus.github.io/Sunshine-Ladies/" class="nav-logo">
+    Sunshine Ladies <span>Cleaning</span>
+  </a>
+  <a href="https://notplatypus.github.io/Sunshine-Ladies/" class="nav-back">
+    ← Back to site
+  </a>
+</nav>
+
+<div class="hero">
+  <h1>Book Your <span>Cleaning</span></h1>
+  <p>Select your service, pick a date and time — we'll take care of the rest.</p>
+</div>
+
+<div class="container">
+
+  <!-- LEVA KOLONA — Forma -->
+  <div>
+
+    <!-- Tip čišćenja -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h2>🧹 Choose Service</h2>
+      <div class="service-options">
+        <label class="service-option" id="opt-residential">
+          <input type="radio" name="tip_ciscenja" value="Residential Cleaning" onchange="izaberiUslugu(this)">
+          <span class="service-icon">🏠</span>
+          <div class="service-info">
+            <div class="service-name">Residential Cleaning</div>
+            <div class="service-desc">Regular home cleaning — kitchen, bathrooms, bedrooms</div>
+          </div>
+        </label>
+        <label class="service-option" id="opt-commercial">
+          <input type="radio" name="tip_ciscenja" value="Commercial Cleaning" onchange="izaberiUslugu(this)">
+          <span class="service-icon">🏢</span>
+          <div class="service-info">
+            <div class="service-name">Commercial Cleaning</div>
+            <div class="service-desc">Offices and retail spaces, flexible scheduling</div>
+          </div>
+        </label>
+        <label class="service-option" id="opt-deep">
+          <input type="radio" name="tip_ciscenja" value="Deep Cleaning" onchange="izaberiUslugu(this)">
+          <span class="service-icon">✨</span>
+          <div class="service-info">
+            <div class="service-name">Deep Cleaning</div>
+            <div class="service-desc">Thorough top-to-bottom cleaning for any space</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Lični podaci -->
+    <div class="card">
+      <h2>👤 Your Details</h2>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="ime" placeholder="Jane Smith" required>
+      </div>
+      <div class="form-group">
+        <label>Email Address *</label>
+        <input type="email" id="email" placeholder="jane@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" id="telefon" placeholder="(806) 555-0000" required>
+      </div>
+      <div class="form-group">
+        <label>Cleaning Address *</label>
+        <input type="text" id="adresa" placeholder="123 Main St, Lubbock, TX" required>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea id="napomena" placeholder="Any special instructions, access codes, pets..."></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DESNA KOLONA — Kalendar -->
+  <div>
+    <div class="card">
+      <h2>📅 Pick a Date & Time</h2>
+
+      <!-- Legenda -->
+      <div class="legenda">
+        <div class="legenda-item">
+          <div class="legenda-dot" style="background:#dcfce7; border: 1px solid #22c55e;"></div>
+          Available
+        </div>
+        <div class="legenda-item">
+          <div class="legenda-dot" style="background:#fee2e2;"></div>
+          Fully booked
+        </div>
+        <div class="legenda-item">
+          <div class="legenda-dot" style="background:#f3f4f6;"></div>
+          Unavailable
+        </div>
+      </div>
+
+      <!-- Kalendar header -->
+      <div class="calendar-header">
+        <button class="cal-btn" onclick="promeniMesec(-1)">‹</button>
+        <h3 id="cal-naslov"></h3>
+        <button class="cal-btn" onclick="promeniMesec(1)">›</button>
+      </div>
+
+      <!-- Kalendar grid -->
+      <div class="calendar-grid" id="calendar-grid">
+        <!-- Dana naziva -->
+        <div class="cal-day-name">Mon</div>
+        <div class="cal-day-name">Tue</div>
+        <div class="cal-day-name">Wed</div>
+        <div class="cal-day-name">Thu</div>
+        <div class="cal-day-name">Fri</div>
+        <div class="cal-day-name">Sat</div>
+        <div class="cal-day-name">Sun</div>
+        <!-- Dani se generišu JS-om -->
+      </div>
+
+      <!-- Izbor vremena -->
+      <div id="vremena-sekcija" style="display:none;">
+        <div class="vremena-title">Available times for <span id="izabrani-datum-tekst"></span>:</div>
+        <div class="vremena-grid" id="vremena-grid">
+          <div class="loading-slot">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-box" id="summary-box" style="display:none;">
+        <h4>📋 Your Selection</h4>
+        <div class="summary-row">
+          <span class="summary-label">Service</span>
+          <span class="summary-val" id="s-usluga">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Date</span>
+          <span class="summary-val" id="s-datum">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Time</span>
+          <span class="summary-val" id="s-vreme">—</span>
+        </div>
+      </div>
+
+      <button class="btn-submit" onclick="posaljiRezervaciju()" id="btn-submit" disabled>
+        Request Booking
+      </button>
+
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================
+// JAVASCRIPT — Booking forma logika
+// ============================================
+
+const API = 'http://localhost:3000/api';
+
+// Stanje aplikacije
+let stanje = {
+  godina: new Date().getFullYear(),
+  mesec: new Date().getMonth(),
+  izabraniDatum: null,
+  izabranoVreme: null,
+  izabranaUsluga: null,
+  slobodnaVremena: []
+};
+
+const MESECI = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+// ===== IZBOR USLUGE =====
+function izaberiUslugu(input) {
+  document.querySelectorAll('.service-option').forEach(el => el.classList.remove('selected'));
+  input.closest('.service-option').classList.add('selected');
+  stanje.izabranaUsluga = input.value;
+  azurirajSummary();
+  azurirajDugme();
+}
+
+// ===== KALENDAR =====
+function promeniMesec(smer) {
+  stanje.mesec += smer;
+  if (stanje.mesec > 11) { stanje.mesec = 0; stanje.godina++; }
+  if (stanje.mesec < 0)  { stanje.mesec = 11; stanje.godina--; }
+  crtajKalendar();
+}
+
+function crtajKalendar() {
+  document.getElementById('cal-naslov').textContent = `${MESECI[stanje.mesec]} ${stanje.godina}`;
+
+  const grid = document.getElementById('calendar-grid');
+  // Brišemo sve osim zaglavlja (7 dana)
+  while (grid.children.length > 7) grid.removeChild(grid.lastChild);
+
+  const danas = new Date();
+  danas.setHours(0,0,0,0);
+
+  // Prvi dan meseca
+  const prviDan = new Date(stanje.godina, stanje.mesec, 1);
+  // Getday: 0=nedela, 1=pon... Konvertujemo na Mon=0
+  let pocetak = prviDan.getDay() - 1;
+  if (pocetak < 0) pocetak = 6;
+
+  const ukupnoDana = new Date(stanje.godina, stanje.mesec + 1, 0).getDate();
+
+  // Prazne ćelije na početku
+  for (let i = 0; i < pocetak; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+
+  // Dani
+  for (let dan = 1; dan <= ukupnoDana; dan++) {
+    const datum = new Date(stanje.godina, stanje.mesec, dan);
+    datum.setHours(0,0,0,0);
+    const datumStr = formatDatum(datum);
+    const danSedmice = datum.getDay(); // 0=ned, 6=sub
+
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = dan;
+
+    // Danas oznaka
+    if (datum.getTime() === danas.getTime()) el.classList.add('today');
+
+    if (datum < danas) {
+      el.classList.add('past'); // Prošli dani
+    } else if (danSedmice === 0 || danSedmice === 6) {
+      el.classList.add('weekend'); // Vikend
+    } else {
+      el.classList.add('available'); // Dostupan
+      el.onclick = () => izaberiDatum(datumStr, datum, el);
+    }
+
+    // Ako je izabran
+    if (datumStr === stanje.izabraniDatum) {
+      el.classList.remove('available');
+      el.classList.add('selected');
+    }
+
+    grid.appendChild(el);
+  }
+}
+
+// Formatira datum kao YYYY-MM-DD
+function formatDatum(datum) {
+  const g = datum.getFullYear();
+  const m = String(datum.getMonth() + 1).padStart(2, '0');
+  const d = String(datum.getDate()).padStart(2, '0');
+  return `${g}-${m}-${d}`;
+}
+
+// Formatira datum za prikaz
+function formatDatumPrikaz(datumStr) {
+  const [g, m, d] = datumStr.split('-');
+  const datum = new Date(g, m-1, d);
+  return datum.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+// ===== IZBOR DATUMA =====
+async function izaberiDatum(datumStr, datumObj, elKliknut) {
+  // Resetujemo prethodni izbor
+  document.querySelectorAll('.cal-day.selected').forEach(el => {
+    el.classList.remove('selected');
+    el.classList.add('available');
+  });
+
+  elKliknut.classList.remove('available');
+  elKliknut.classList.add('selected');
+
+  stanje.izabraniDatum = datumStr;
+  stanje.izabranoVreme = null;
+
+  // Prikazujemo sekciju za vreme
+  const sekcija = document.getElementById('vremena-sekcija');
+  sekcija.style.display = 'block';
+  document.getElementById('izabrani-datum-tekst').textContent = formatDatumPrikaz(datumStr);
+  document.getElementById('vremena-grid').innerHTML = '<div class="loading-slot">⏳ Loading available times...</div>';
+
+  // Dohvatamo slobodna vremena sa servera
+  try {
+    const odgovor = await fetch(`${API}/available-slots?date=${datumStr}`);
+    const podaci = await odgovor.json();
+
+    stanje.slobodnaVremena = podaci.slobodna_vremena || [];
+    prikaziVremena(podaci);
+  } catch (err) {
+    document.getElementById('vremena-grid').innerHTML = '<div class="loading-slot">❌ Could not load times. Is the server running?</div>';
+  }
+
+  azurirajSummary();
+  azurirajDugme();
+}
+
+// ===== PRIKAZ VREMENA =====
+function prikaziVremena(podaci) {
+  const grid = document.getElementById('vremena-grid');
+
+  if (podaci.blokiran) {
+    grid.innerHTML = `<div class="loading-slot" style="grid-column:1/-1;">
+      🚫 This day is unavailable: ${podaci.razlog || 'Closed'}
+    </div>`;
+    return;
+  }
+
+  if (!podaci.slobodna_vremena || podaci.slobodna_vremena.length === 0) {
+    grid.innerHTML = '<div class="loading-slot" style="grid-column:1/-1;">No times available</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  podaci.slobodna_vremena.forEach(slot => {
+    const btn = document.createElement('button');
+    btn.className = 'vreme-btn';
+    btn.textContent = slot.vreme;
+    btn.disabled = !slot.slobodno;
+
+    if (slot.vreme === stanje.izabranoVreme) btn.classList.add('selected');
+
+    if (slot.slobodno) {
+      btn.onclick = () => izaberiVreme(slot.vreme, btn);
+    }
+
+    grid.appendChild(btn);
+  });
+}
+
+// ===== IZBOR VREMENA =====
+function izaberiVreme(vreme, btnKliknut) {
+  document.querySelectorAll('.vreme-btn.selected').forEach(b => b.classList.remove('selected'));
+  btnKliknut.classList.add('selected');
+  stanje.izabranoVreme = vreme;
+  azurirajSummary();
+  azurirajDugme();
+}
+
+// ===== SUMMARY BOX =====
+function azurirajSummary() {
+  const box = document.getElementById('summary-box');
+  if (stanje.izabranaUsluga || stanje.izabraniDatum || stanje.izabranoVreme) {
+    box.style.display = 'block';
+    document.getElementById('s-usluga').textContent = stanje.izabranaUsluga || '—';
+    document.getElementById('s-datum').textContent = stanje.izabraniDatum ? formatDatumPrikaz(stanje.izabraniDatum) : '—';
+    document.getElementById('s-vreme').textContent = stanje.izabranoVreme || '—';
+  }
+}
+
+// ===== DUGME — enable/disable =====
+function azurirajDugme() {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = !(stanje.izabranaUsluga && stanje.izabraniDatum && stanje.izabranoVreme);
+}
+
+// ===== SLANJE REZERVACIJE =====
+async function posaljiRezervaciju() {
+  const ime      = document.getElementById('ime').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const telefon  = document.getElementById('telefon').value.trim();
+  const adresa   = document.getElementById('adresa').value.trim();
+  const napomena = document.getElementById('napomena').value.trim();
+
+  // Validacija
+  if (!ime || !email || !telefon || !adresa) {
+    prikaziStatus('Please fill in all required fields.', 'greska');
+    return;
+  }
+  if (!stanje.izabranaUsluga) {
+    prikaziStatus('Please select a service.', 'greska');
+    return;
+  }
+  if (!stanje.izabraniDatum || !stanje.izabranoVreme) {
+    prikaziStatus('Please select a date and time.', 'greska');
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    const odgovor = await fetch(`${API}/booking`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ime,
+        email,
+        telefon,
+        adresa,
+        tip_ciscenja: stanje.izabranaUsluga,
+        datum: stanje.izabraniDatum,
+        vreme: stanje.izabranoVreme,
+        napomena
+      })
+    });
+
+    const podaci = await odgovor.json();
+
+    if (odgovor.ok) {
+      prikaziStatus('✅ Booking request sent! Check your email for confirmation. We will contact you shortly.', 'uspeh');
+      // Resetujemo formu
+      btn.textContent = 'Request Sent ✓';
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 500);
+    } else {
+      prikaziStatus(podaci.greska || 'Something went wrong. Please try again.', 'greska');
+      btn.disabled = false;
+      btn.textContent = 'Request Booking';
+    }
+
+  } catch (err) {
+    prikaziStatus('Could not connect to server. Please call us at (806) 239-2893.', 'greska');
+    btn.disabled = false;
+    btn.textContent = 'Request Booking';
+  }
+}
+
+function prikaziStatus(tekst, tip) {
+  const el = document.getElementById('status');
+  el.textContent = tekst;
+  el.className = `status ${tip}`;
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ===== INIT =====
+crtajKalendar();
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — Sunshine Ladies</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1B2B4B;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .login-card {
+    background: white;
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .logo h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    color: #1B2B4B;
+  }
+  .logo h1 span { color: #F5C300; }
+  .logo p { color: #888; font-size: 0.875rem; margin-top: 4px; }
+  .form-group { margin-bottom: 18px; }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 7px;
+  }
+  input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: #1B2B4B; }
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: #F5C300;
+    color: #1B2B4B;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: #e6b800; }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .greska {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-top: 14px;
+    display: none;
+  }
+  .lock-icon {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="logo">
+    <span class="lock-icon">🔐</span>
+    <h1>Sunshine <span>Ladies</span></h1>
+    <p>Admin Dashboard</p>
+  </div>
+
+  <div class="form-group">
+    <label>Username</label>
+    <input type="text" id="username" placeholder="admin" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"
+           onkeypress="if(event.key==='Enter') login()">
+  </div>
+
+  <button class="btn" onclick="login()" id="btn-login">Sign In</button>
+  <div class="greska" id="greska"></div>
+</div>
+
+<script>
+  // Ako je već ulogovan, idi na dashboard
+  fetch('/api/admin/check')
+    .then(r => r.json())
+    .then(d => { if (d.ulogovan) window.location.href = '/dashboard.html'; })
+    .catch(() => {});
+
+  async function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('btn-login');
+    const greska = document.getElementById('greska');
+
+    if (!username || !password) {
+      greska.textContent = 'Enter username and password.';
+      greska.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+    greska.style.display = 'none';
+
+    try {
+      const odgovor = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (odgovor.ok) {
+        window.location.href = '/dashboard.html';
+      } else {
+        const podaci = await odgovor.json();
+        greska.textContent = podaci.greska || 'Wrong username or password.';
+        greska.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    } catch (err) {
+      greska.textContent = 'Could not connect to server.';
+      greska.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  }
+</script>
+</body>
+</html>
